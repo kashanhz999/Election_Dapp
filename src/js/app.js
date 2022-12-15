@@ -54,6 +54,15 @@ App = {
 
     // Hydrate the smart contract with values from the blockchain
     App.election = await App.contracts.Election.deployed()
+    App.listedForEvent();
+  },
+
+  listedForEvent: function() {
+    const evt = App.election.votedEvent();
+    evt.watch(function(error,result){
+      console.log("event triggered",event);
+      App.render()
+    })
   },
 
   //render Function
@@ -95,9 +104,14 @@ App = {
       const name = candidate[1]
       const voteCount = candidate[2]
 
-      // Create the html for the task
+      // Render candiate Result
       const candidateTemplate = "<tr><th>" + id + "</th><td>" + name + "</td><td>" + voteCount + "</td></tr>"
       candidatesResults.append(candidateTemplate);
+
+      //Render candidate ballot option
+
+      const candidateOption = "<option value='" + id + "' >" + name + "</ option>"
+          candidatesSelect.append(candidateOption);
 
       const hasVoted = await App.election.voters(App.account);
       if (hasVoted) {
